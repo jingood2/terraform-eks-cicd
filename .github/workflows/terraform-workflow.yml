@@ -1,0 +1,154 @@
+name: "Infracost analysis and Terraform deployment"
+
+on:
+  #workflow_dispatch:
+  #  inputs:
+  #    environment:
+  #      type: choice
+  #      description: 'Select Environment'
+  #      options:
+  #      - dev
+  #      - prod
+  push:
+    branches: [ main ]
+  pull_request:
+#     branches: [ main ]
+
+#permissions:  # added using https://github.com/step-security/secure-workflows
+#  contents: read
+permissions: write-all
+
+jobs:
+
+  #infracost:
+  #  permissions:
+  #    contents: write
+  #    pull-requests: write
+  #  uses: wenqiglantz/reusable-workflows-modules/.github/workflows/terraform-infracost.yml@main
+  #  with:
+  #    # need to specify working-directory as that's where the terraform files live in the source code
+  #    working-directory: ./terraform
+  #    terraform-var-file: ./.env/${{ inputs.env || 'dev' }}/terraform.tfvars
+  #    usage-file: ./.env/${{ inputs.env || 'dev' }}/infracost-usage.yml
+  #  secrets: inherit
+  scanner:
+    #needs: infracost
+    #uses: wenqiglantz/reusable-workflows-modules/.github/workflows/terraform.yml@main
+    uses: ./.github/workflows/scanner.yml
+    with:
+      # need to specify working-directory as that's where the terraform files live in the source code
+      working-directory: ./terraform
+      environment: ${{ inputs.environment }}
+    secrets: inherit
+
+  #review:
+  #  needs: [scanner]
+  #  permissions:
+  #    id-token: write  # need this for OIDC
+  #    contents: read   # This is required for actions/checkout
+  #  #uses: wenqiglantz/reusable-workflows-modules/.github/workflows/terraform.yml@main
+  #  uses: ./.github/workflows/review.yml
+  #  with:
+  #    # need to specify working-directory as that's where the terraform files live in the source code
+  #    working-directory: ./terraform
+  #    environment: ${{ inputs.environment }}
+  #  secrets: inherit
+  
+  terraform-plan:
+    name: terraform-plan
+    needs: [scanner]
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: './terraform'
+    strategy:
+      fail-fast: false
+      matrix:
+        path:
+          - dev
+          - prod
+    env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      EXPAND_SUMMARY_DETAILS: true
+      TF_IN_AUTOMATION: true
+      TF_WORKSPACE: ${{ matrix['path'] }}
+
+    permissions: write-all
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@7b3bcd8d76f3cbaec0a3564e53de7c9adf00f0a7
+      with:
+        terraform_wrapper: true
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1-node16
+      with:
+        #role-to-assume: ${{ secrets.DEV_DEPLOY_ROLE }}
+        aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
+        aws-secret-access-key: ${{secrets.AWS_SECRET_ACCESS_KEY}}
+        aws-region: ${{ secrets.AWS_REGION || 'us-east-1' }}
+
+    - name: Terraform Init - ${{ matrix['path'] }}
+      id: init
+      run: |
+        unset TF_WORKSPACE
+        rm -rf .terraform
+        terraform init -backend-config='./.env/${{ matrix['path'] || 'dev' }}/backend.tfvars' -upgrade=true -no-color -input=false
+        terraform workspace select "${{matrix['path']}}" || terraform workspace new "${{matrix['path']}}"
+
+    - name: Post Init - ${{ matrix['path'] }}
+      if: always() && github.ref != 'refs/heads/main' && (steps.init.outcome == 'success' || steps.init.outcome == 'failure')
+      uses: robburger/terraform-pr-commenter@v1
+      with:
+        commenter_type: init
+        commenter_input: ${{ format('{0}{1}', steps.init.outputs.stdout, steps.init.outputs.stderr) }}
+        commenter_exitcode: ${{ steps.init.outputs.exitcode }}
+
+
+    - name: Terraform Plan - ${{ matrix['path'] }}
+      id: plan
+      run: |
+        terraform plan -no-color -input=false -var-file=.env/${{ matrix['path'] || 'dev' }}/terraform.tfvars -out tfplan
+
+    - name: Post Plan
+      uses: robburger/terraform-pr-commenter@v1
+      env:
+        EXPAND_SUMMARY_DETAILS: true # Override global environment variable; expand details just for this step
+      with:
+        commenter_type: plan
+        commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
+        commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
+
+  deployment-dev:
+    needs: [terraform-plan]
+    #needs: infracost
+    permissions:
+      id-token: write  # need this for OIDC
+      contents: read   # This is required for actions/checkout
+    #uses: wenqiglantz/reusable-workflows-modules/.github/workflows/terraform.yml@main
+    uses: ./.github/workflows/deployment.yml
+    with:
+      # need to specify working-directory as that's where the terraform files live in the source code
+      working-directory: ./terraform
+      #environment: ${{ inputs.environment }}
+      environment: 'dev'
+    secrets: inherit
+  
+  #deployment-prod:
+  #  needs: [deployment-dev]
+  #  #needs: infracost
+  #  permissions:
+  #    id-token: write  # need this for OIDC
+  #    contents: read   # This is required for actions/checkout
+  #  #uses: wenqiglantz/reusable-workflows-modules/.github/workflows/terraform.yml@main
+  #  uses: ./.github/workflows/deployment.yml
+  #  with:
+  #    # need to specify working-directory as that's where the terraform files live in the source code
+  #    working-directory: ./terraform
+  #    environment: 'prod'
+  #    #environment: ${{ inputs.environment }}
+  #  secrets: inherit
