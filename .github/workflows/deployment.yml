@@ -85,5 +85,5 @@ jobs:
         id: slack_output
         run: |
            terraform output -no-color -json > slack_response.json
-           SLACK_MESSAGE=$(cat slack_response.json)
+           SLACK_MESSAGE=$(cat slack_response.json | sed '$!s/$/\\n/' | tr -d '\n' )
            curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE'}" ${{ secrets.SLACK_WEBHOOK_URL }}
