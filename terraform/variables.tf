@@ -15,7 +15,7 @@ variable "environment" {
 variable "project" {
   description = "Project in the large organization this Infrastructure belongs"
   type        = string
-  default     = "poc"
+  default     = "jingood2"
 }
 
 #####################################################################################
@@ -32,7 +32,7 @@ variable "vpc_tag_value" {
   # if left blank then {core_stack_name} will be used
   description = "The tag value of the VPC and subnets"
   type        = string
-  default     = "jingood2-dev-vpc"
+  default     = ""
 }
 
 variable "cluster_version" {
