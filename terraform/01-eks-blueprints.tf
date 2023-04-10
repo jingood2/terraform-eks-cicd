@@ -93,5 +93,15 @@ module "eks_blueprints" {
     delete = "150m"
   } */
 
+  # --> Paste the code here
+  platform_teams = {
+    admin = {
+      users = [
+        data.aws_caller_identity.current.arn
+      ]
+    }
+  }
+  # <-- End of new code
+
   tags = local.common_tags
 }
