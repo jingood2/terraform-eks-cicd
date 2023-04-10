@@ -84,6 +84,6 @@ jobs:
         # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
         id: slack_output
         run: |
-           terraform output -json > slack_response.json
+           terraform output -no-color -json > slack_response.json
            SLACK_MESSAGE=$(cat slack_response.json)
            curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE'}" ${{ secrets.SLACK_WEBHOOK_URL }}
