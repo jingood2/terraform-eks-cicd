@@ -16,4 +16,5 @@ output "eks_cluster_endpoint" {
 output "eks_cluster_certificate_authority_data" {
   description = "eks_cluster_certificate_authority_data"
   value       = module.eks_blueprints.eks_cluster_certificate_authority_data
+  sensitive   = true
 }
