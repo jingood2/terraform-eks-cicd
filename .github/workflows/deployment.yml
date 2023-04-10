@@ -65,17 +65,25 @@ jobs:
         run: |
           terraform plan -no-color -input=false -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out tfplan
       
-      - name: send slack notification
-        # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
-        id: slack
-        run: |
-           terraform show -no-color tfplan > slack_response.txt
-           sed -i 's/\r$//g' slack_response.txt
-           SLACK_MESSAGE=$(cat slack_response.txt | sed '$!s/$/\\n/' | tr -d '\n')
-           curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE'}" ${{ secrets.SLACK_WEBHOOK_URL }}
+      #- name: send slack notification
+      #  # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
+      #  id: slack
+      #  run: |
+      #     terraform show -no-color tfplan > slack_response.txt
+      #     sed -i 's/\r$//g' slack_response.txt
+      #     SLACK_MESSAGE=$(cat slack_response.txt | sed '$!s/$/\\n/' | tr -d '\n')
+      #     curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE'}" ${{ secrets.SLACK_WEBHOOK_URL }}
       
       - name: Terraform Apply - ${{ inputs.environment }}
         if: github.ref == 'refs/heads/${{ inputs.apply-branch }}' && github.event_name == 'push'
         id: apply
         run: |
           terraform apply -auto-approve tfplan
+      
+      - name: send slack notification
+        # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
+        id: slack_output
+        run: |
+           terraform output -json > slack_response.json
+           SLACK_MESSAGE=$(cat slack_response.json)
+           curl -X POST -H 'Content-type: application/json' --data "{'text':'$SLACK_MESSAGE'}" ${{ secrets.SLACK_WEBHOOK_URL }}
