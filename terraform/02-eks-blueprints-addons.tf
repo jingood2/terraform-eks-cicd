@@ -11,11 +11,24 @@ module "kubernetes_addons" {
 
   # EKS Add-ons
   enable_amazon_eks_aws_ebs_csi_driver = true
-  enable_cluster_autoscaler             = true
-  enable_metrics_server                 = true
+  #enable_cluster_autoscaler             = true
+  #enable_metrics_server                 = true
 
   # Self-Managed Add-ons
-  enable_argocd = true
+  enable_argocd         = true
+  # Indicates that ArgoCD is responsible for managing/deploying Add-ons
+  argocd_manage_add_ons = true
+
+  argocd_applications = {
+    addons    = {
+      path               = "chart"
+      repo_url           = "https://github.com/aws-samples/eks-blueprints-add-ons.git"
+      add_on_application = true
+    }
+    #workloads = local.workload_application #We comment it for now
+  }
+
+
   # This example shows how to set default ArgoCD Admin Password using SecretsManager with Helm Chart set_sensitive values.
   argocd_helm_config = {
     set_sensitive = [
@@ -23,7 +36,13 @@ module "kubernetes_addons" {
         name  = "configs.secret.argocdServerAdminPassword"
         value = bcrypt_hash.argo.id
       }
-    ]
+    ],
+    #set = [
+    #  {
+    #    name  = "server.service.type"
+    #    value = "LoadBalancer"
+    #  }
+    #]
   }
 }
 
