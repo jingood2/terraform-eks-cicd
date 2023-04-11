@@ -4,18 +4,30 @@
 module "kubernetes_addons" {
   source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.27.0"
 
-  eks_cluster_id = module.eks_blueprints.eks_cluster_id
-  eks_cluster_endpoint = module.eks_blueprints.eks_cluster_endpoint
-  eks_oidc_provider    = module.eks_blueprints.oidc_provider
-  eks_cluster_version  = module.eks_blueprints.eks_cluster_version
+  eks_cluster_id        = module.eks_blueprints.eks_cluster_id
+  eks_cluster_endpoint  = module.eks_blueprints.eks_cluster_endpoint
+  eks_oidc_provider     = module.eks_blueprints.oidc_provider
+  eks_cluster_version   = module.eks_blueprints.eks_cluster_version
 
-  # EKS Add-ons
+  #-----------------AWS Managed EKS Add-ons----------------------
   enable_amazon_eks_aws_ebs_csi_driver = true
-  enable_cluster_autoscaler             = true
-  enable_metrics_server                 = true
+
 
   # Self-Managed Add-ons
-  enable_argocd = true
+  enable_argocd         = true
+  # Indicates that ArgoCD is responsible for managing/deploying Add-ons
+  argocd_manage_add_ons = true
+
+  argocd_applications = {
+    addons    = {
+      path               = "chart"
+      repo_url           = "https://github.com/aws-samples/eks-blueprints-add-ons.git"
+      add_on_application = true
+    }
+    #workloads = local.workload_application #We comment it for now
+  }
+
+
   # This example shows how to set default ArgoCD Admin Password using SecretsManager with Helm Chart set_sensitive values.
   argocd_helm_config = {
     set_sensitive = [
@@ -23,8 +35,50 @@ module "kubernetes_addons" {
         name  = "configs.secret.argocdServerAdminPassword"
         value = bcrypt_hash.argo.id
       }
-    ]
+    ],
+    #set = [
+    #  {
+    #    name  = "server.service.type"
+    #    value = "LoadBalancer"
+    #  }
+    #]
   }
+
+  #---------------------------------------------------------------
+  # Kubernetes ADD-ONS - You can add additional addons here
+  # https://aws-ia.github.io/terraform-aws-eks-blueprints/add-ons/
+  #---------------------------------------------------------------
+
+
+  enable_aws_load_balancer_controller  = false
+  enable_aws_for_fluentbit             = false
+  enable_metrics_server                = true
+  enable_aws_efs_csi_driver            = false
+  enable_airflow                       = false
+  enable_aws_fsx_csi_driver            = false
+  enable_aws_cloudwatch_metrics        = false
+  enable_aws_node_termination_handler  = false
+  enable_cert_manager                  = false
+  enable_cert_manager_csi_driver       = false
+  enable_cluster_autoscaler            = false
+  enable_datadog_operator              = false
+  enable_external_dns                  = false
+  enable_fargate_fluentbit             = false
+  enable_grafana                       = false
+  enable_ingress_nginx                 = false
+  enable_karpenter                     = false
+  enable_keda                          = false
+  enable_kubernetes_dashboard          = false
+  enable_prometheus                    = false
+  enable_thanos                        = false
+  enable_vpa                           = false
+  enable_velero                        = false
+  enable_amazon_eks_adot               = false
+  enable_emr_on_eks                    = false
+  enable_cilium                        = false
+  enable_kubecost                      = false
+  enable_calico                        = false
+  
 }
 
 #---------------------------------------------------------------
