@@ -8,4 +8,4 @@ cluster_version = "1.25"
 eks_admin_role_name = "eks-admin-role"
 
 # efs 
-enable_efs = true
+enable_efs = false
