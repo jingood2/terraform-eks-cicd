@@ -11,22 +11,18 @@ module "efs" {
   throughput_mode                 = "provisioned"
 
   # Mount targets / security group
-  mount_targets              = { for k, v in zipmap(["us-east-1a", "us-east-1c"], data.aws_subnets.private.ids) : k => { subnet_id = v } }
+  mount_targets              = { for k, v in zipmap(["us-east-1a", "us-east-1c"], data.aws_subnets.private.ids) : k => { subnet_id = v, security_groups = [module.eks_blueprints.cluster_primary_security_group_id] } }
 
   security_group_name = "${local.prefix_name}-efs-sg"
   security_group_description = "${local.prefix_name} EFS security group"
   security_group_vpc_id      = data.aws_vpc.vpc.id
-  security_group_rules = {
-    #vpc = {
-    #  # relying on the defaults provdied for EFS/NFS (2049/TCP + ingress)
-    #  description = "NFS ingress from VPC private subnets"
-    #  cidr_blocks = module.vpc.private_subnets_cidr_blocks
-    #},
-    private_subnet = {
-      description = "NFS ingress from VPC private subnets"
-      security_groups = [module.eks_blueprints.cluster_primary_security_group_id]
-    }
-  }
+  #security_group_rules = {
+  #  vpc = {
+  #    # relying on the defaults provdied for EFS/NFS (2049/TCP + ingress)
+  #    description = "NFS ingress from VPC private subnets"
+  #    cidr_blocks = data.aws_subnets.private.cidr_blocks
+  #  },
+  #}
 
   create = var.enable_efs
 
