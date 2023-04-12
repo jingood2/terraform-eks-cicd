@@ -1,4 +1,4 @@
-data "aws_subnet_ids" "private_subnets" {
+data "aws_subnet" "selected" {
   vpc_id = data.aws_vpc.vpc.id
   filter {
     name   = "tag:${var.vpc_tag_key}"
@@ -29,7 +29,7 @@ module "efs" {
     vpc = {
       # relying on the defaults provdied for EFS/NFS (2049/TCP + ingress)
       description = "NFS ingress from VPC private subnets"
-      cidr_blocks = data.aws_subnet_ids.private_subnets.*.cidr_blocks
+      cidr_blocks = [data.aws_subnet.selected.*.cidr_block]
     },
   }
 
