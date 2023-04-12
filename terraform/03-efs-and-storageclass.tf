@@ -1,9 +1,18 @@
-data "aws_subnet" "selected" {
+data "aws_subnet_ids" "selected" {
   vpc_id = data.aws_vpc.vpc.id
   filter {
     name   = "tag:${var.vpc_tag_key}"
     values = ["${local.tag_val_private_subnet}*"]
   }
+}
+
+data "aws_subnet" "private_subnet_cidr_blocks" {
+  # aws_subnet_ids 데이터 원본에서 가져온 서브넷 ID를 사용합니다.
+  for_each = aws_subnet_ids.selected
+
+  # 각 서브넷의 CIDR 블록 값을 가져오기 위해 aws_subnet 데이터 원본을 참조합니다.
+  # 이 때, aws_subnet 데이터 원본은 aws_subnet_ids 데이터 원본에서 가져온 각 서브넷 ID에 대해 실행됩니다.
+  id = each.key
 }
 
 module "efs" {
@@ -28,8 +37,8 @@ module "efs" {
   security_group_rules = {
     vpc = {
       # relying on the defaults provdied for EFS/NFS (2049/TCP + ingress)
-      description = "NFS ingress from VPC private subnets"
-      cidr_blocks = [data.aws_subnet.selected.*.cidr_block]
+      description = "EFS ingress from VPC private subnets"
+      cidr_blocks = values(data.aws_subnet.private_subnet_cidr_blocks)[*].cidr_block 
     },
   }
 
