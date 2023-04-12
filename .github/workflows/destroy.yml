@@ -105,7 +105,6 @@ jobs:
       
       - name: Terraform destroy
         # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
-        if: github.ref == 'refs/heads/destroy'
         id: destroy
         run: |
           #terraform apply addons.tfplan
