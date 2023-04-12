@@ -21,7 +21,7 @@ module "efs" {
 
   # Mount targets / security group
   #mount_targets              = { for k, v in zipmap(["us-east-1a", "us-east-1c"], data.aws_subnets.private.ids) : k => { subnet_id = v, security_groups = [module.eks_blueprints.cluster_primary_security_group_id] } }
-  mount_targets = { for id in toset(data.aws_subnets.private.ids): k => { subnet_id = id , security_groups = [module.eks_blueprints.cluster_primary_security_group_id] }}
+  mount_targets = { for id in data.aws_subnets.private.ids: id => { subnet_id = id , security_groups = [module.eks_blueprints.cluster_primary_security_group_id] } }
 
   security_group_name = "${local.prefix_name}-efs-sg"
   security_group_description = "${local.prefix_name} EFS security group"
