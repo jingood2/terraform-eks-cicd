@@ -1,9 +1,8 @@
-data "aws_availability_zones" "available" {
-  state = "available"
-
+data "aws_subnet_ids" "private_subnets" {
+  vpc_id = data.aws_vpc.example.id
   filter {
-    name   = "zone-type"
-    values = ["availability-zone"]
+    name   = "tag:${var.vpc_tag_key}"
+    values = ["${local.tag_val_private_subnet}*"]
   }
 }
 
@@ -26,13 +25,13 @@ module "efs" {
   security_group_name = "${local.prefix_name}-efs-sg"
   security_group_description = "${local.prefix_name} EFS security group"
   security_group_vpc_id      = data.aws_vpc.vpc.id
-  #security_group_rules = {
-  #  vpc = {
-  #    # relying on the defaults provdied for EFS/NFS (2049/TCP + ingress)
-  #    description = "NFS ingress from VPC private subnets"
-  #    cidr_blocks = data.aws_subnets.private.cidr_blocks
-  #  },
-  #}
+  security_group_rules = {
+    vpc = {
+      # relying on the defaults provdied for EFS/NFS (2049/TCP + ingress)
+      description = "NFS ingress from VPC private subnets"
+      cidr_blocks = data.aws_subnet_ids.private_subnets.*.cidr_blocks
+    },
+  }
 
   create = var.enable_efs
 
