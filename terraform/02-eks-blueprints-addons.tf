@@ -9,6 +9,9 @@ module "kubernetes_addons" {
   eks_oidc_provider     = module.eks_blueprints.oidc_provider
   eks_cluster_version   = module.eks_blueprints.eks_cluster_version
 
+  # Wait on the node group(s) before provisioning addons
+  #data_plane_wait_arn = join(",", [for group in module.eks_blueprints.managed_node_groups : group.node_group_arn])
+
   #-----------------AWS Managed EKS Add-ons----------------------
   enable_amazon_eks_aws_ebs_csi_driver = true
 
@@ -48,8 +51,6 @@ module "kubernetes_addons" {
   # Kubernetes ADD-ONS - You can add additional addons here
   # https://aws-ia.github.io/terraform-aws-eks-blueprints/add-ons/
   #---------------------------------------------------------------
-
-
   enable_aws_load_balancer_controller  = false
   enable_aws_for_fluentbit             = false
   enable_metrics_server                = true
