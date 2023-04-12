@@ -6,3 +6,6 @@ vpc_tag_key = "Name"
 vpc_tag_value = "-pri-"
 cluster_version = "1.25"
 eks_admin_role_name = "eks-admin-role"
+
+# efs variable
+enable_efs = false
