@@ -30,7 +30,7 @@ module "efs" {
 
   create = false
 
-  tags = common_tags
+  tags = local.common_tags
 
 
 }
