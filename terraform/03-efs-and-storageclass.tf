@@ -1,6 +1,6 @@
 data "aws_subnet" "private_subnet_cidr_blocks" {
   # aws_subnet_ids 데이터 원본에서 가져온 서브넷 ID를 사용합니다.
-  for_each = data.aws_subnets.private.ids
+  for_each = toset(data.aws_subnets.private.ids)
 
   # 각 서브넷의 CIDR 블록 값을 가져오기 위해 aws_subnet 데이터 원본을 참조합니다.
   # 이 때, aws_subnet 데이터 원본은 aws_subnet_ids 데이터 원본에서 가져온 각 서브넷 ID에 대해 실행됩니다.
