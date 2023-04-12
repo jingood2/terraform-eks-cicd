@@ -1,5 +1,5 @@
 data "aws_subnet_ids" "private_subnets" {
-  vpc_id = data.aws_vpc.example.id
+  vpc_id = data.aws_vpc.vpc.id
   filter {
     name   = "tag:${var.vpc_tag_key}"
     values = ["${local.tag_val_private_subnet}*"]
