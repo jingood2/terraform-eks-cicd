@@ -7,8 +7,8 @@ module "efs" {
   encrypted      = true
 
   // ToDo: Apply choice variable
-  performance_mode                = "maxIO"
-  throughput_mode                 = "provisioned"
+  performance_mode                = "generalPurpose"
+  throughput_mode                 = "bursting"
 
   # Mount targets / security group
   mount_targets              = { for k, v in zipmap(["us-east-1a", "us-east-1c"], data.aws_subnets.private.ids) : k => { subnet_id = v, security_groups = [module.eks_blueprints.cluster_primary_security_group_id] } }
