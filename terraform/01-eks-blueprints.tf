@@ -80,7 +80,7 @@ module "eks_blueprints" {
     role = {
       capacity_type   = "SPOT"
       node_group_name = "general"
-      instance_types  = ["t3a.medium"]
+      instance_types  = ["t3a.large"]
       desired_size    = "1"
       max_size        = "2"
       min_size        = "1"
