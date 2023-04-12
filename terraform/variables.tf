@@ -46,3 +46,13 @@ variable "eks_admin_role_name" {
   description = "Additional IAM role to be admin in the cluster"
   default     = "eks-admin-role"
 }
+
+#####################################################################################
+# 03. eks-and-storageclass Input Variables
+#####################################################################################
+
+variable "enable_efs" {
+  type        = bool
+  description = "enable efs and storageclass"
+  default     = false
+}
