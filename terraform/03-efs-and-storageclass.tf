@@ -28,9 +28,24 @@ module "efs" {
     }
   }
 
-  create = false
+  create = var.enable_efs
 
   tags = local.common_tags
+}
 
+resource "kubernetes_storage_class_v1" "efs" {
+  count = var.enable_efs ? 1 : 0
 
+  metadata {
+    name = "${local.prefix_name}-efs"
+  }
+
+  storage_provisioner = "efs.csi.aws.com"
+  reclaim_policy      = "Retain"
+
+  parameters = {
+    type = "efs-ap"
+    directoryPerms = "700"
+    fileSystemId = module.efs.id
+  }
 }
