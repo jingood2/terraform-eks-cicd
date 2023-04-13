@@ -54,4 +54,10 @@ resource "kubernetes_storage_class_v1" "efs" {
     directoryPerms = "700"
     fileSystemId = module.efs.id
   }
+
+  mount_options = ["iam"]
+
+  depends_on = [
+    module.kubernetes_addons
+  ]
 }
