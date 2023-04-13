@@ -47,11 +47,22 @@ module "kubernetes_addons" {
     #]
   }
 
+  /* aws_load_balancer_controller_helm_config = {
+    name                       = "aws-load-balancer-controller"
+    chart                      = "aws-load-balancer-controller"
+    repository                 = "https://aws.github.io/eks-charts"
+    version                    = "1.3.1"
+    namespace                  = "kube-system"
+    values = [templatefile("${path.module}/values.yaml", {
+      replicaCount = 1
+    })]
+  } */
+  
   #---------------------------------------------------------------
   # Kubernetes ADD-ONS - You can add additional addons here
   # https://aws-ia.github.io/terraform-aws-eks-blueprints/add-ons/
   #---------------------------------------------------------------
-  enable_aws_load_balancer_controller  = false
+  enable_aws_load_balancer_controller  = true
   enable_aws_for_fluentbit             = false
   enable_metrics_server                = false
   enable_aws_efs_csi_driver            = var.enable_efs
