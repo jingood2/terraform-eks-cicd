@@ -47,11 +47,20 @@ module "kubernetes_addons" {
     #]
   }
 
+  aws_load_balancer_controller_helm_config = {
+    values = [
+      {
+        name = "replicaCount"
+        value = 1
+      }
+    ]
+   }
+  
   #---------------------------------------------------------------
   # Kubernetes ADD-ONS - You can add additional addons here
   # https://aws-ia.github.io/terraform-aws-eks-blueprints/add-ons/
   #---------------------------------------------------------------
-  enable_aws_load_balancer_controller  = false
+  enable_aws_load_balancer_controller  = true
   enable_aws_for_fluentbit             = false
   enable_metrics_server                = false
   enable_aws_efs_csi_driver            = var.enable_efs
