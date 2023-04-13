@@ -73,7 +73,7 @@ jobs:
       - name: Terraform Destroy Plan - ${{ inputs.environment }}
         id: plan
         run: |
-          #terraform plan -destroy -target=module.eks_blueprints_kubernetes_addons -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out addons.tfplan
+          terraform plan -destroy -target=module.eks_blueprints_kubernetes_addons -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out addons.tfplan
           terraform plan -destroy -target=module.eks_blueprints -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out blueprints.tfplan
           terraform plan -destroy -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out destroy.tfplan
       
@@ -105,10 +105,9 @@ jobs:
       
       - name: Terraform destroy
         # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
-        if: github.ref == 'refs/heads/destroy'
         id: destroy
         run: |
-          #terraform apply addons.tfplan
+          terraform apply addons.tfplan
           terraform apply blueprints.tfplan
           terraform apply destroy.tfplan
       
