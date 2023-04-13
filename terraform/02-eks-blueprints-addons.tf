@@ -48,13 +48,15 @@ module "kubernetes_addons" {
   }
 
   aws_load_balancer_controller_helm_config = {
-    values = [
-      {
-        name = "replicaCount"
-        value = 1
-      }
-    ]
-   }
+    name                       = "aws-load-balancer-controller"
+    chart                      = "aws-load-balancer-controller"
+    repository                 = "https://aws.github.io/eks-charts"
+    version                    = "1.3.1"
+    namespace                  = "kube-system"
+    values = [templatefile("${path.module}/values.yaml", {
+      replicaCount = 1
+    })]
+  }
   
   #---------------------------------------------------------------
   # Kubernetes ADD-ONS - You can add additional addons here
