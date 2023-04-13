@@ -47,7 +47,7 @@ module "kubernetes_addons" {
     #]
   }
 
-  aws_load_balancer_controller_helm_config = {
+  /* aws_load_balancer_controller_helm_config = {
     name                       = "aws-load-balancer-controller"
     chart                      = "aws-load-balancer-controller"
     repository                 = "https://aws.github.io/eks-charts"
@@ -56,7 +56,7 @@ module "kubernetes_addons" {
     values = [templatefile("${path.module}/values.yaml", {
       replicaCount = 1
     })]
-  }
+  } */
   
   #---------------------------------------------------------------
   # Kubernetes ADD-ONS - You can add additional addons here
