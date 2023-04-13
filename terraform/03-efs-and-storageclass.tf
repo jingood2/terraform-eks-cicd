@@ -50,7 +50,7 @@ resource "kubernetes_storage_class_v1" "efs" {
   reclaim_policy      = "Retain"
 
   parameters = {
-    type = "efs-ap"
+    provisioningMode = "efs-ap"
     directoryPerms = "700"
     fileSystemId = module.efs.id
   }
