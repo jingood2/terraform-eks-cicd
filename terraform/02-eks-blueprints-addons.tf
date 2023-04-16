@@ -62,7 +62,7 @@ module "kubernetes_addons" {
   # Kubernetes ADD-ONS - You can add additional addons here
   # https://aws-ia.github.io/terraform-aws-eks-blueprints/add-ons/
   #---------------------------------------------------------------
-  enable_aws_load_balancer_controller  = true
+  enable_aws_load_balancer_controller  = false
   enable_aws_for_fluentbit             = false
   enable_metrics_server                = false
   enable_aws_efs_csi_driver            = var.enable_efs
@@ -72,7 +72,7 @@ module "kubernetes_addons" {
   enable_aws_node_termination_handler  = false
   enable_cert_manager                  = false
   enable_cert_manager_csi_driver       = false
-  enable_cluster_autoscaler            = false
+  enable_cluster_autoscaler            = true
   enable_datadog_operator              = false
   enable_external_dns                  = false
   enable_fargate_fluentbit             = false
