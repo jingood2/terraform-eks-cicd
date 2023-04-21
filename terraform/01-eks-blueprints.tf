@@ -136,9 +136,33 @@ module "eks_blueprints" {
   #-------------------------------
   # TEAMS (Soft Multi-tenancy)
   #-------------------------------
-  applcation_teams = {
-
-  }
+  #applcation_teams = {
+     # First Team
+  #  team-blue = {
+  #    "labels" = {
+  #      "appName"     = "example",
+  #      "projectName" = "example",
+  #      "environment" = "example",
+  #      "domain"      = "example",
+  #      "uuid"        = "example",
+  #    }
+  #    "quota" = {
+  #      "requests.cpu"    = "1000m",
+  #      "requests.memory" = "4Gi",
+  #      "limits.cpu"      = "2000m",
+  #      "limits.memory"   = "8Gi",
+  #      "pods"            = "10",
+  #      "secrets"         = "10",
+  #      "services"        = "10"
+  #    }
+  #    manifests_dir = "./manifests"
+  #    # Belows are examples of IAM users and roles
+  #    users = [
+  #      "arn:aws:iam::123456789012:user/blue-team-user",
+  #      "arn:aws:iam::123456789012:role/blue-team-sso-iam-role"
+  #    ]
+  #  }
+  #}
   platform_teams = {
     admin = {
       users = [
