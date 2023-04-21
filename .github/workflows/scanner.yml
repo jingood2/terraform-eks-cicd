@@ -70,7 +70,7 @@ jobs:
         uses: hashicorp/setup-terraform@7b3bcd8d76f3cbaec0a3564e53de7c9adf00f0a7
       
       - name: tfsec
-        uses: aquasecurity/tfsec-pr-commenter-action@v1.2.0
+        uses: aquasecurity/tfsec-pr-commenter-action@v1.3.1
         with:
           working_directory: .
           soft_fail_commenter: false
