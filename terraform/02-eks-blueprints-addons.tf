@@ -32,21 +32,21 @@ module "kubernetes_addons" {
 
 
   # This example shows how to set default ArgoCD Admin Password using SecretsManager with Helm Chart set_sensitive values.
-  argocd_helm_config = {
-    set_sensitive = [
-      {
-        name  = "configs.secret.argocdServerAdminPassword"
-        value = bcrypt_hash.argo.id
-      }
-    ],
-    timeout          = "3600" # changed from 1200
+  #argocd_helm_config = {
+  #  set_sensitive = [
+  #    {
+  #      name  = "configs.secret.argocdServerAdminPassword"
+  #      value = bcrypt_hash.argo.id
+  #    }
+  #  ],
+    #timeout          = "3600" # changed from 1200
     #set = [
     #  {
     #    name  = "server.service.type"
     #    value = "LoadBalancer"
     #  }
     #]
-  }
+  #}
 
   /* aws_load_balancer_controller_helm_config = {
     name                       = "aws-load-balancer-controller"
