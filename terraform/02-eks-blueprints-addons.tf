@@ -39,6 +39,7 @@ module "kubernetes_addons" {
         value = bcrypt_hash.argo.id
       }
     ],
+    timeout          = "3600" # changed from 1200
     #set = [
     #  {
     #    name  = "server.service.type"
