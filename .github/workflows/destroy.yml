@@ -111,7 +111,7 @@ jobs:
           #terraform apply blueprints.tfplan
           #terraform apply destroy.tfplan
           kubectl get Application -A -o name | xargs kubectl patch -p '{"metadata":{"finalizers":null}}' --type=merge -n argocd
-          terraform apply -var='cleanup_argocd_applications=true' -target="module.kubernetes_addons" -auto-approve
+          #terraform apply -var='cleanup_argocd_applications=true' -target="module.kubernetes_addons" -auto-approve
           terraform destroy -target="module.kubernetes_addons" -auto-approve
           terraform destroy -target="module.eks_blueprints" -auto-approve
       
