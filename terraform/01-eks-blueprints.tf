@@ -88,9 +88,9 @@ module "eks_blueprints" {
     default = {
       capacity_type   = "SPOT"
       node_group_name = "general"
-      instance_types  = ["t3a.large"]
+      instance_types  = ["t3a.xlarge"]
       desired_size    = "1"
-      max_size        = "3"
+      max_size        = "2"
       min_size        = "1"
     }
   }
