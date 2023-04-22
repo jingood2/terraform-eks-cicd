@@ -70,13 +70,13 @@ jobs:
           terraform init -backend-config="key=${{inputs.environment}}}" -backend-config='./.env/${{ inputs.environment || 'dev' }}/backend.tfvars' -upgrade=true -no-color -input=false
           terraform workspace select "${{inputs.environment}}" || terraform workspace new "${{inputs.environment}}"
       
-      - name: Terraform Destroy Plan - ${{ inputs.environment }}
-        id: plan
-        run: |
-          terraform plan -destroy -target=module.kubernetes_addons -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out addons.tfplan
-          terraform plan -destroy -target=module.eks_blueprints -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out blueprints.tfplan
-          terraform plan -destroy -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out destroy.tfplan
-      
+      #- name: Terraform Destroy Plan - ${{ inputs.environment }}
+      #  id: plan
+      #  run: |
+      #    terraform plan -destroy -target=module.kubernetes_addons -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out addons.tfplan
+      #    terraform plan -destroy -target=module.eks_blueprints -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out blueprints.tfplan
+      #    terraform plan -destroy -var-file=.env/${{ inputs.environment || 'dev' }}/terraform.tfvars -out destroy.tfplan
+
       - name: Slack Notification
         uses: rtCamp/action-slack-notify@v2
         env:
@@ -107,9 +107,11 @@ jobs:
         # If you want to use this workflow to run terraform destroy, create a feature branch "destroy", trigger this workflow from that branch to destroy.
         id: destroy
         run: |
-          terraform apply addons.tfplan
-          terraform apply blueprints.tfplan
-          terraform apply destroy.tfplan
+          #terraform apply addons.tfplan
+          #terraform apply blueprints.tfplan
+          #terraform apply destroy.tfplan
+          terraform destroy -target="module.kubernetes_addons" -auto-approve
+          terraform destroy -target="module.eks_blueprints" -auto-approve
       
       
       
