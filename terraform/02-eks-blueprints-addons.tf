@@ -21,7 +21,7 @@ module "kubernetes_addons" {
   # Indicates that ArgoCD is responsible for managing/deploying Add-ons
   argocd_manage_add_ons = true
 
-  argocd_applications = {
+  argocd_applications = var.cleanup_argocd_applications ? {} : {
     addons    = {
       path               = "chart"
       repo_url           = "https://github.com/aws-samples/eks-blueprints-add-ons.git"
