@@ -54,5 +54,5 @@ variable "eks_admin_role_name" {
 variable "enable_efs" {
   type        = bool
   description = "enable efs and storageclass"
-  default     = true
+  default     = false
 }
