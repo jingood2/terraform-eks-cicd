@@ -72,7 +72,7 @@ module "kubernetes_addons" {
   enable_aws_node_termination_handler  = false
   enable_cert_manager                  = false
   enable_cert_manager_csi_driver       = false
-  enable_cluster_autoscaler            = true
+  enable_cluster_autoscaler            = false
   enable_datadog_operator              = false
   enable_external_dns                  = false
   enable_fargate_fluentbit             = false
