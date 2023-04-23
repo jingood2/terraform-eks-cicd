@@ -65,7 +65,7 @@ module "kubernetes_addons" {
   #---------------------------------------------------------------
   enable_aws_load_balancer_controller  = false
   enable_aws_for_fluentbit             = false
-  enable_metrics_server                = true
+  enable_metrics_server                = false
   enable_aws_efs_csi_driver            = var.enable_efs
   enable_airflow                       = false
   enable_aws_fsx_csi_driver            = false
