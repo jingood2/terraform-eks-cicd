@@ -51,8 +51,14 @@ variable "eks_admin_role_name" {
 # 03. eks-and-storageclass Input Variables
 #####################################################################################
 
+variable "cleanup_argocd_applications" {
+    type = bool
+    description = "Provides control for deleting ArgoCD workflow apps and managed addons using terraform apply, which must be done prior to terraform destroying addons and the cluster itself, to prevent orphaning resources created by ArgoCD addons or workflow apps."
+    default = false
+}
+
 variable "enable_efs" {
   type        = bool
   description = "enable efs and storageclass"
-  default     = true
+  default     = false
 }

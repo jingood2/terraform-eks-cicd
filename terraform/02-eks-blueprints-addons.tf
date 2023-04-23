@@ -2,7 +2,7 @@
 # Kubernetes Addons
 ################################################################################
 module "kubernetes_addons" {
-  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.27.0"
+  source = "github.com/aws-ia/terraform-aws-eks-blueprints//modules/kubernetes-addons?ref=v4.29.0"
 
   eks_cluster_id        = module.eks_blueprints.eks_cluster_id
   eks_cluster_endpoint  = module.eks_blueprints.eks_cluster_endpoint
@@ -13,7 +13,7 @@ module "kubernetes_addons" {
   #data_plane_wait_arn = join(",", [for group in module.eks_blueprints.managed_node_groups : group.node_group_arn])
 
   #-----------------AWS Managed EKS Add-ons----------------------
-  enable_amazon_eks_aws_ebs_csi_driver = true
+  enable_amazon_eks_aws_ebs_csi_driver = false
 
 
   # Self-Managed Add-ons
@@ -21,7 +21,7 @@ module "kubernetes_addons" {
   # Indicates that ArgoCD is responsible for managing/deploying Add-ons
   argocd_manage_add_ons = true
 
-  argocd_applications = {
+  argocd_applications = var.cleanup_argocd_applications ? {} : {
     addons    = {
       path               = "chart"
       repo_url           = "https://github.com/aws-samples/eks-blueprints-add-ons.git"
@@ -32,20 +32,21 @@ module "kubernetes_addons" {
 
 
   # This example shows how to set default ArgoCD Admin Password using SecretsManager with Helm Chart set_sensitive values.
-  argocd_helm_config = {
-    set_sensitive = [
-      {
-        name  = "configs.secret.argocdServerAdminPassword"
-        value = bcrypt_hash.argo.id
-      }
-    ],
+  #argocd_helm_config = {
+  #  set_sensitive = [
+  #    {
+  #      name  = "configs.secret.argocdServerAdminPassword"
+  #      value = bcrypt_hash.argo.id
+  #    }
+  #  ],
+    #timeout          = "3600" # changed from 1200
     #set = [
     #  {
     #    name  = "server.service.type"
     #    value = "LoadBalancer"
     #  }
     #]
-  }
+  #}
 
   /* aws_load_balancer_controller_helm_config = {
     name                       = "aws-load-balancer-controller"
@@ -64,7 +65,7 @@ module "kubernetes_addons" {
   #---------------------------------------------------------------
   enable_aws_load_balancer_controller  = false
   enable_aws_for_fluentbit             = false
-  enable_metrics_server                = false
+  enable_metrics_server                = true
   enable_aws_efs_csi_driver            = var.enable_efs
   enable_airflow                       = false
   enable_aws_fsx_csi_driver            = false
@@ -72,7 +73,7 @@ module "kubernetes_addons" {
   enable_aws_node_termination_handler  = false
   enable_cert_manager                  = false
   enable_cert_manager_csi_driver       = false
-  enable_cluster_autoscaler            = true
+  enable_cluster_autoscaler            = false
   enable_datadog_operator              = false
   enable_external_dns                  = false
   enable_fargate_fluentbit             = false
@@ -110,12 +111,12 @@ resource "bcrypt_hash" "argo" {
 }
 
 #tfsec:ignore:aws-ssm-secret-use-customer-key
-resource "aws_secretsmanager_secret" "argocd" {
-  name                    = "argocd"
-  recovery_window_in_days = 0 # Set to zero for this example to force delete during Terraform destroy
-}
+#resource "aws_secretsmanager_secret" "argocd" {
+#  name                    = "${local.prefix_name}-argocd"
+#  recovery_window_in_days = 0 # Set to zero for this example to force delete during Terraform destroy
+#}
 
-resource "aws_secretsmanager_secret_version" "argocd" {
-  secret_id     = aws_secretsmanager_secret.argocd.id
-  secret_string = random_password.argocd.result
-}
+#resource "aws_secretsmanager_secret_version" "argocd" {
+#  secret_id     = aws_secretsmanager_secret.argocd.id
+#  secret_string = random_password.argocd.result
+#}
