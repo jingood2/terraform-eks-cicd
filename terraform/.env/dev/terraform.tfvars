@@ -7,5 +7,7 @@ vpc_tag_value = ""
 cluster_version = "1.25"
 eks_admin_role_name = "eks-admin-role"
 
+cleanup_argocd_applications = true
+
 # efs 
 enable_efs = false

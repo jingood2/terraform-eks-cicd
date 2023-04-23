@@ -17,9 +17,9 @@ module "kubernetes_addons" {
 
 
   # Self-Managed Add-ons
-  enable_argocd         = true
+  enable_argocd         = false
   # Indicates that ArgoCD is responsible for managing/deploying Add-ons
-  argocd_manage_add_ons = true
+  argocd_manage_add_ons = false
 
   argocd_applications = var.cleanup_argocd_applications ? {} : {
     addons    = {
