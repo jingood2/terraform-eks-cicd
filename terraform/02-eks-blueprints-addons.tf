@@ -13,7 +13,7 @@ module "kubernetes_addons" {
   #data_plane_wait_arn = join(",", [for group in module.eks_blueprints.managed_node_groups : group.node_group_arn])
 
   #-----------------AWS Managed EKS Add-ons----------------------
-  enable_amazon_eks_aws_ebs_csi_driver = false
+  enable_amazon_eks_aws_ebs_csi_driver = true
 
 
   # Self-Managed Add-ons
