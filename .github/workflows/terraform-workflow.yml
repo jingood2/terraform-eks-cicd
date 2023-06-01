@@ -85,7 +85,7 @@ jobs:
         terraform_wrapper: true
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1-node16
+      uses: aws-actions/configure-aws-credentials@5727f247b64f324ec403ac56ae05e220fd02b65f
       with:
         #role-to-assume: ${{ secrets.DEV_DEPLOY_ROLE }}
         aws-access-key-id: ${{secrets.AWS_ACCESS_KEY_ID}}
